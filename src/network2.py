@@ -82,6 +82,7 @@ class Network(object):
         self.sizes = sizes
         self.default_weight_initializer()
         self.cost=cost
+        self.cnt = 0
 
     def default_weight_initializer(self):
         """Initialize each weight using a Gaussian distribution with mean 0
@@ -130,6 +131,7 @@ class Network(object):
             lmbda = 0.0,
             mode = "L2",
             evaluation_data=None,
+            max_try = 100,
             monitor_evaluation_cost=False,
             monitor_evaluation_accuracy=False,
             monitor_training_cost=False,
@@ -182,6 +184,13 @@ class Network(object):
             if monitor_evaluation_accuracy:
                 accuracy = self.accuracy(evaluation_data)
                 evaluation_accuracy.append(accuracy)
+                if len(evaluation_accuracy) > 1 and accuracy < evaluation_accuracy[len(evaluation_accuracy)-2]:
+                    self.cnt += 1
+                    if self.cnt >= max_try:
+                        print "early stop in epoch %s" % j
+                        break
+                else:
+                    self.cnt = 0
                 print "Accuracy on evaluation data: {} / {}".format(
                     self.accuracy(evaluation_data), n_data)
             print
