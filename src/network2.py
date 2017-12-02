@@ -132,6 +132,7 @@ class Network(object):
             mode = "L2",
             evaluation_data=None,
             max_try = 100,
+            min_acc = 0.01,
             monitor_evaluation_cost=False,
             monitor_evaluation_accuracy=False,
             monitor_training_cost=False,
@@ -184,6 +185,10 @@ class Network(object):
             if monitor_evaluation_accuracy:
                 accuracy = self.accuracy(evaluation_data)
                 evaluation_accuracy.append(accuracy)
+                print "Accuracy on evaluation data: {} / {}".format(
+                    self.accuracy(evaluation_data), n_data)
+
+                # if after max_try, accuracy don't improve, stop training
                 if len(evaluation_accuracy) > 1 and accuracy < evaluation_accuracy[len(evaluation_accuracy)-2]:
                     self.cnt += 1
                     if self.cnt >= max_try:
@@ -191,8 +196,12 @@ class Network(object):
                         break
                 else:
                     self.cnt = 0
-                print "Accuracy on evaluation data: {} / {}".format(
-                    self.accuracy(evaluation_data), n_data)
+
+                # if accurcay improve don't over max_acc, stop training
+                if len(evaluation_accuracy) > 1 and (accuracy-evaluation_accuracy[len(evaluation_accuracy)-2])*1.0 /(1.*n_data) < min_acc:
+                    print "early stop in epoch %s" % j
+                    break
+
             print
         return evaluation_cost, evaluation_accuracy, \
             training_cost, training_accuracy

@@ -21,4 +21,5 @@ if __name__ == '__main__':
     # net.SGD(training_data, 30, 10, 0.5, lmbda=5.0, mode="L1", evaluation_data=validation_data, monitor_evaluation_accuracy=True)
 
     # early stop
-    net.SGD(training_data, 30, 10, 0.5, lmbda=5.0, mode="L2", evaluation_data=validation_data, max_try=1, monitor_evaluation_accuracy=True)
+    # net.SGD(training_data, 30, 10, 0.5, lmbda=5.0, mode="L2", evaluation_data=validation_data, max_try=1, monitor_evaluation_accuracy=True)
+    net.SGD(training_data, 30, 10, 0.5, lmbda=5.0, mode="L2", evaluation_data=validation_data, min_acc=0.01, monitor_evaluation_accuracy=True)
